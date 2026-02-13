@@ -3,118 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buku Kas Digital - Anti Hilang</title>
+    <title>Buku Kas Digital - Auto Save</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body class="bg-blue-50 min-h-screen p-4 md:p-8">
+<body class="bg-blue-50 min-h-screen p-4 md:p-8 font-sans">
 
     <div class="max-w-5xl mx-auto">
         <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-gray-800">Buku Kas Digital</h1>
-            <p class="text-gray-500">Data tersimpan aman di browser ini</p>
+            <h1 class="text-3xl font-bold text-gray-800 flex justify-center items-center gap-2">
+                <i class="fas fa-wallet text-blue-600"></i> Buku Kas Digital
+            </h1>
+            <p class="text-gray-500">Data Anda tersimpan otomatis di browser ini</p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 text-center">
-            <div class="bg-white p-4 rounded-xl shadow-sm border-b-4 border-green-500">
-                <p class="text-sm text-gray-500 uppercase font-bold">Pemasukan</p>
-                <h2 id="total-pemasukan" class="text-xl font-bold text-green-600">Rp 0</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div class="bg-green-50 p-6 rounded-xl border border-green-100 shadow-sm">
+                <p class="text-green-600 text-sm font-semibold">Total Pemasukan</p>
+                <h2 id="total-pemasukan" class="text-2xl font-bold text-green-700">Rp 0</h2>
             </div>
-            <div class="bg-white p-4 rounded-xl shadow-sm border-b-4 border-red-500">
-                <p class="text-sm text-gray-500 uppercase font-bold">Pengeluaran</p>
-                <h2 id="total-pengeluaran" class="text-xl font-bold text-red-600">Rp 0</h2>
+            <div class="bg-red-50 p-6 rounded-xl border border-red-100 shadow-sm">
+                <p class="text-red-600 text-sm font-semibold">Total Pengeluaran</p>
+                <h2 id="total-pengeluaran" class="text-2xl font-bold text-red-700">Rp 0</h2>
             </div>
-            <div class="bg-blue-600 p-4 rounded-xl shadow-md text-white">
-                <p class="text-sm text-blue-100 uppercase font-bold">Saldo Akhir</p>
-                <h2 id="total-saldo" class="text-xl font-bold">Rp 0</h2>
+            <div class="bg-blue-600 p-6 rounded-xl shadow-lg text-white">
+                <p class="text-blue-100 text-sm font-semibold">Saldo</p>
+                <h2 id="total-saldo" class="text-2xl font-bold">Rp 0</h2>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="bg-white p-6 rounded-xl shadow-sm">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 class="text-lg font-bold mb-4">Tambah Transaksi</h3>
                 <div class="flex gap-2 mb-4">
-                    <button onclick="changeType('masuk')" id="btn-masuk" class="flex-1 py-2 rounded bg-green-500 text-white font-bold">Masuk</button>
-                    <button onclick="changeType('keluar')" id="btn-keluar" class="flex-1 py-2 rounded bg-gray-200 text-gray-600 font-bold">Keluar</button>
+                    <button onclick="setType('pemasukan')" id="btn-pemasukan" class="flex-1 py-2 rounded-lg font-semibold bg-green-500 text-white transition">Pemasukan</button>
+                    <button onclick="setType('pengeluaran')" id="btn-pengeluaran" class="flex-1 py-2 rounded-lg font-semibold bg-gray-100 text-gray-600 hover:bg-red-500 hover:text-white transition">Pengeluaran</button>
                 </div>
-                <input type="number" id="inp-jumlah" placeholder="Jumlah Rp" class="w-full mb-3 p-2 border rounded">
-                <input type="text" id="inp-ket" placeholder="Keterangan" class="w-full mb-3 p-2 border rounded">
-                <button onclick="simpan()" class="w-full bg-blue-600 text-white py-2 rounded font-bold">Simpan</button>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm text-gray-600 mb-1">Jumlah (Rp)</label>
+                        <input type="number" id="input-jumlah" class="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400" placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-600 mb-1">Kategori</label>
+                        <select id="input-kategori" class="w-full p-2 border rounded-lg outline-none">
+                            <option value="Gaji">Gaji</option>
+                            <option value="Makanan">Makanan</option>
+                            <option value="Transportasi">Transportasi</option>
+                            <option value="Hiburan">Hiburan</option>
+                            <option value="Lain-lain">Lain-lain</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-600 mb-1">Keterangan</label>
+                        <input type="text" id="input-keterangan" class="w-full p-2 border rounded-lg outline-none" placeholder="Contoh: Beli Kopi">
+                    </div>
+                    <button onclick="tambahTransaksi()" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition shadow-md">Simpan Transaksi</button>
+                </div>
             </div>
 
-            <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm">
-                <h3 class="font-bold mb-4">Riwayat</h3>
-                <div id="list-data" class="space-y-2"></div>
+            <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h3 class="text-lg font-bold mb-6">Riwayat Transaksi</h3>
+                <div id="daftar-transaksi" class="space-y-3">
+                    </div>
             </div>
         </div>
     </div>
 
     <script>
-        // --- LOGIKA PENYIMPANAN ---
-        // Ambil data saat web dibuka
-        let database = JSON.parse(localStorage.getItem('SIMPAN_KAS')) || [];
-        let tipe = 'masuk';
+        // 1. Ambil data dari LocalStorage saat web dibuka
+        // Jika data kosong, buat array kosong []
+        let transaksi = JSON.parse(localStorage.getItem('my_cashbook_data')) || [];
+        let tipeSekarang = 'pemasukan';
 
-        // Tampilkan data yang sudah ada
-        tampil();
+        // Langsung tampilkan data saat web dibuka
+        updateUI();
 
-        function changeType(t) {
-            tipe = t;
-            document.getElementById('btn-masuk').className = t === 'masuk' ? 'flex-1 py-2 rounded bg-green-500 text-white font-bold' : 'flex-1 py-2 rounded bg-gray-200 text-gray-600 font-bold';
-            document.getElementById('btn-keluar').className = t === 'keluar' ? 'flex-1 py-2 rounded bg-red-500 text-white font-bold' : 'flex-1 py-2 rounded bg-gray-200 text-gray-600 font-bold';
+        function setType(type) {
+            tipeSekarang = type;
+            const btnIn = document.getElementById('btn-pemasukan');
+            const btnOut = document.getElementById('btn-pengeluaran');
+
+            if(type === 'pemasukan') {
+                btnIn.className = "flex-1 py-2 rounded-lg font-semibold bg-green-500 text-white transition";
+                btnOut.className = "flex-1 py-2 rounded-lg font-semibold bg-gray-100 text-gray-600 transition";
+            } else {
+                btnOut.className = "flex-1 py-2 rounded-lg font-semibold bg-red-500 text-white transition";
+                btnIn.className = "flex-1 py-2 rounded-lg font-semibold bg-gray-100 text-gray-600 transition";
+            }
         }
 
-        function simpan() {
-            const jm = document.getElementById('inp-jumlah').value;
-            const kt = document.getElementById('inp-ket').value;
+        function updateUI() {
+            const list = document.getElementById('daftar-transaksi');
+            const elMasuk = document.getElementById('total-pemasukan');
+            const elKeluar = document.getElementById('total-pengeluaran');
+            const elSaldo = document.getElementById('total-saldo');
 
-            if(!jm || !kt) return alert("Isi semua!");
+            let masuk = 0, keluar = 0;
+            list.innerHTML = '';
 
-            database.push({
-                tipe: tipe,
-                jumlah: parseInt(jm),
-                ket: kt,
-                tgl: new Date().toLocaleString()
-            });
+            // Jika tidak ada data sama sekali
+            if (transaksi.length === 0) {
+                list.innerHTML = '<p class="text-center text-gray-400 py-10">Belum ada transaksi</p>';
+            }
 
-            // SIMPAN KE BROWSER
-            localStorage.setItem('SIMPAN_KAS', JSON.stringify(database));
-            
-            document.getElementById('inp-jumlah').value = '';
-            document.getElementById('inp-ket').value = '';
-            tampil();
-        }
+            transaksi.forEach((t, index) => {
+                if(t.tipe === 'pemasukan') masuk += t.jumlah;
+                else keluar += t.jumlah;
 
-        function tampil() {
-            const container = document.getElementById('list-data');
-            let m = 0, k = 0;
-            container.innerHTML = '';
-
-            database.forEach((d, i) => {
-                if(d.tipe === 'masuk') m += d.jumlah; else k += d.jumlah;
-                container.innerHTML += `
-                    <div class="flex justify-between p-3 bg-gray-50 rounded border-l-4 ${d.tipe === 'masuk' ? 'border-green-500' : 'border-red-500'}">
-                        <div>
-                            <p class="font-bold">${d.ket}</p>
-                            <small class="text-gray-400">${d.tgl}</small>
+                const card = `
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">
+                        <div class="flex items-center gap-4">
+                            <div class="p-3 rounded-full ${t.tipe === 'pemasukan' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}">
+                                <i class="fas ${t.tipe === 'pemasukan' ? 'fa-arrow-up' : 'fa-arrow-down'}"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-gray-800">${t.keterangan} <span class="ml-2 text-[10px] bg-gray-200 px-2 py-0.5 rounded text-gray-500 uppercase font-bold">${t.kategori}</span></p>
+                                <p class="text-xs text-gray-400">${t.tanggal}</p>
+                            </div>
                         </div>
-                        <div class="text-right">
-                            <p class="font-bold ${d.tipe === 'masuk' ? 'text-green-600' : 'text-red-600'}">Rp ${d.jumlah.toLocaleString()}</p>
-                            <button onclick="hapus(${i})" class="text-red-300 text-xs">Hapus</button>
+                        <div class="flex items-center gap-4">
+                            <p class="font-bold ${t.tipe === 'pemasukan' ? 'text-green-600' : 'text-red-600'}">
+                                ${t.tipe === 'pemasukan' ? '+' : '-'} Rp ${t.jumlah.toLocaleString('id-ID')}
+                            </p>
+                            <button onclick="hapusTransaksi(${index})" class="text-gray-300 hover:text-red-500 transition">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </div>
                     </div>
                 `;
+                list.insertAdjacentHTML('afterbegin', card);
             });
 
-            document.getElementById('total-pemasukan').innerText = "Rp " + m.toLocaleString();
-            document.getElementById('total-pengeluaran').innerText = "Rp " + k.toLocaleString();
-            document.getElementById('total-saldo').innerText = "Rp " + (m - k).toLocaleString();
+            elMasuk.innerText = `Rp ${masuk.toLocaleString('id-ID')}`;
+            elKeluar.innerText = `Rp ${keluar.toLocaleString('id-ID')}`;
+            elSaldo.innerText = `Rp ${(masuk - keluar).toLocaleString('id-ID')}`;
+
+            // 2. SIMPAN DATA KE LOCALSTORAGE
+            // Ini akan dijalankan setiap kali updateUI dipanggil (tambah/hapus)
+            localStorage.setItem('my_cashbook_data', JSON.stringify(transaksi));
         }
 
-        function hapus(i) {
-            if(confirm("Hapus?")) {
-                database.splice(i, 1);
-                localStorage.setItem('SIMPAN_KAS', JSON.stringify(database));
-                tampil();
+        function tambahTransaksi() {
+            const jumlahInput = document.getElementById('input-jumlah');
+            const keteranganInput = document.getElementById('input-keterangan');
+            const kategori = document.getElementById('input-kategori').value;
+
+            const jumlah = parseInt(jumlahInput.value);
+            const keterangan = keteranganInput.value;
+
+            if(!jumlah || !keterangan) {
+                alert("Mohon isi jumlah dan keterangan!");
+                return;
+            }
+
+            const dataBaru = {
+                tipe: tipeSekarang,
+                jumlah,
+                kategori,
+                keterangan,
+                tanggal: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+            };
+
+            transaksi.push(dataBaru);
+            updateUI();
+            
+            // Bersihkan form
+            jumlahInput.value = '';
+            keteranganInput.value = '';
+        }
+
+        function hapusTransaksi(index) {
+            if(confirm("Apakah Anda yakin ingin menghapus catatan ini?")) {
+                transaksi.splice(index, 1);
+                updateUI();
             }
         }
     </script>
