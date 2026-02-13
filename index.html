@@ -78,8 +78,12 @@
     </div>
 
     <script>
-        let transaksi = [];
+        // --- PERBAIKAN: Load data dari LocalStorage ---
+        let transaksi = JSON.parse(localStorage.getItem('kas_digital_data')) || [];
         let tipeSekarang = 'pemasukan';
+
+        // Tampilkan data saat pertama kali buka web
+        updateUI();
 
         function setType(type) {
             tipeSekarang = type;
@@ -103,6 +107,11 @@
 
             let masuk = 0, keluar = 0;
             list.innerHTML = '';
+
+            // Jika kosong, tampilkan pesan default
+            if (transaksi.length === 0) {
+                list.innerHTML = '<p class="text-center text-gray-400 py-10">Belum ada transaksi</p>';
+            }
 
             transaksi.forEach((t, index) => {
                 if(t.tipe === 'pemasukan') masuk += t.jumlah;
@@ -135,6 +144,9 @@
             elMasuk.innerText = `Rp ${masuk.toLocaleString('id-ID')}`;
             elKeluar.innerText = `Rp ${keluar.toLocaleString('id-ID')}`;
             elSaldo.innerText = `Rp ${(masuk - keluar).toLocaleString('id-ID')}`;
+
+            // --- PERBAIKAN: Simpan data setiap ada update ---
+            localStorage.setItem('kas_digital_data', JSON.stringify(transaksi));
         }
 
         function tambahTransaksi() {
@@ -155,14 +167,16 @@
             transaksi.push(data);
             updateUI();
             
-            // Reset form
             document.getElementById('input-jumlah').value = '';
             document.getElementById('input-keterangan').value = '';
         }
 
         function hapusTransaksi(index) {
-            transaksi.splice(index, 1);
-            updateUI();
+            // Tambah konfirmasi agar tidak sengaja terhapus
+            if(confirm("Hapus transaksi ini?")) {
+                transaksi.splice(index, 1);
+                updateUI();
+            }
         }
     </script>
 </body>
