@@ -14,7 +14,7 @@
             <h1 class="text-3xl font-bold text-gray-800 flex justify-center items-center gap-2">
                 <i class="fas fa-wallet text-blue-600"></i> Buku Kas Digital
             </h1>
-            <p class="text-gray-500">Kelola keuangan Anda dengan mudah dan terorganisir</p>
+            <p class="text-gray-500">Data otomatis tersimpan di memori browser Anda</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
@@ -65,31 +65,37 @@
             <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="text-lg font-bold">Riwayat Transaksi</h3>
-                    <div class="flex gap-2">
-                        <button class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-xs font-bold">Semua</button>
-                    </div>
                 </div>
                 
                 <div id="daftar-transaksi" class="space-y-3">
-                    <p class="text-center text-gray-400 py-10">Belum ada transaksi</p>
-                </div>
+                    </div>
             </div>
         </div>
     </div>
 
     <script>
-        // --- PERBAIKAN: Load data dari LocalStorage ---
-        let transaksi = JSON.parse(localStorage.getItem('kas_digital_data')) || [];
-        let tipeSekarang = 'pemasukan';
+        // NAMA KUNCI PENYIMPANAN
+        const KEY = 'DATA_BUKU_KAS_2026';
+        let transaksi = [];
 
-        // Tampilkan data saat pertama kali buka web
-        updateUI();
+        // FUNGSI LOAD DATA (DIJALANKAN OTOMATIS SAAT BUKA WEB)
+        window.onload = function() {
+            const dataLama = localStorage.getItem(KEY);
+            if (dataLama) {
+                transaksi = JSON.parse(dataLama);
+                console.log("Data ditemukan! Jumlah:", transaksi.length);
+            } else {
+                console.log("Belum ada data di memori.");
+            }
+            updateUI();
+        };
+
+        let tipeSekarang = 'pemasukan';
 
         function setType(type) {
             tipeSekarang = type;
             const btnIn = document.getElementById('btn-pemasukan');
             const btnOut = document.getElementById('btn-pengeluaran');
-
             if(type === 'pemasukan') {
                 btnIn.className = "flex-1 py-2 rounded-lg font-semibold bg-green-500 text-white transition";
                 btnOut.className = "flex-1 py-2 rounded-lg font-semibold bg-gray-100 text-gray-600 transition";
@@ -108,7 +114,6 @@
             let masuk = 0, keluar = 0;
             list.innerHTML = '';
 
-            // Jika kosong, tampilkan pesan default
             if (transaksi.length === 0) {
                 list.innerHTML = '<p class="text-center text-gray-400 py-10">Belum ada transaksi</p>';
             }
@@ -117,7 +122,7 @@
                 if(t.tipe === 'pemasukan') masuk += t.jumlah;
                 else keluar += t.jumlah;
 
-                const card = `
+                list.insertAdjacentHTML('afterbegin', `
                     <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">
                         <div class="flex items-center gap-4">
                             <div class="p-3 rounded-full ${t.tipe === 'pemasukan' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}">
@@ -137,43 +142,39 @@
                             </button>
                         </div>
                     </div>
-                `;
-                list.insertAdjacentHTML('afterbegin', card);
+                `);
             });
 
             elMasuk.innerText = `Rp ${masuk.toLocaleString('id-ID')}`;
             elKeluar.innerText = `Rp ${keluar.toLocaleString('id-ID')}`;
             elSaldo.innerText = `Rp ${(masuk - keluar).toLocaleString('id-ID')}`;
 
-            // --- PERBAIKAN: Simpan data setiap ada update ---
-            localStorage.setItem('kas_digital_data', JSON.stringify(transaksi));
+            // SIMPAN DATA KE MEMORI
+            localStorage.setItem(KEY, JSON.stringify(transaksi));
         }
 
         function tambahTransaksi() {
-            const jumlah = parseInt(document.getElementById('input-jumlah').value);
-            const kategori = document.getElementById('input-kategori').value;
-            const keterangan = document.getElementById('input-keterangan').value;
+            const jm = document.getElementById('input-jumlah').value;
+            const ktg = document.getElementById('input-kategori').value;
+            const ket = document.getElementById('input-keterangan').value;
 
-            if(!jumlah || !keterangan) return alert("Isi data dengan lengkap!");
+            if(!jm || !ket) return alert("Isi jumlah dan keterangan!");
 
-            const data = {
+            transaksi.push({
                 tipe: tipeSekarang,
-                jumlah,
-                kategori,
-                keterangan,
+                jumlah: parseInt(jm),
+                kategori: ktg,
+                keterangan: ket,
                 tanggal: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
-            };
+            });
 
-            transaksi.push(data);
             updateUI();
-            
             document.getElementById('input-jumlah').value = '';
             document.getElementById('input-keterangan').value = '';
         }
 
         function hapusTransaksi(index) {
-            // Tambah konfirmasi agar tidak sengaja terhapus
-            if(confirm("Hapus transaksi ini?")) {
+            if(confirm("Hapus data ini?")) {
                 transaksi.splice(index, 1);
                 updateUI();
             }
